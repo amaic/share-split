@@ -19,4 +19,8 @@
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </None>
 </ItemGroup>
+
+ <ItemGroup>
+   <ProjectReference Include="..\ShareSplit.Shared\ShareSplit.Shared.csproj" />
+ </ItemGroup>
 </Project>

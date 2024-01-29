@@ -1,11 +1,14 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ShareSplit.Shared.Interfaces;
+using ShareSplit.Shared.Model;
 
 namespace ShareSplit;
 
 public class MainService(
     ILogger<MainService> logger,
-    IHostApplicationLifetime applicationLifetime
+    IHostApplicationLifetime applicationLifetime,
+    IShareSplitService shareSplitService
     ) : IHostedService
 {
 
@@ -13,31 +16,17 @@ public class MainService(
     {
         logger.LogInformation("Starting main service.");
 
-        var votiningInstructions = new VotingInstruction[]
+
+        var votingInstructions = new CumulatedVotingInstruction[]
         {
-            new (3,0,0),
-            new (0,3,0),
-            new (0,0,3)
+             new(1,100,0,0),
+             new(2,100,0,0),
+             new(3,33,33,34),
+             new(4,37,63,0),
+             new(5,7,5,88),
         };
 
-        var singleVotes = new HashSet<int>();
-
-        int? total = null;
-        foreach (var votingInstruction in votiningInstructions)
-        {
-            if (total == null)
-            {
-                total = votingInstruction.Total;
-            }
-            else
-            {
-                if (total != votingInstruction.Total) throw new Exception("The sum of votes must be equal over all voting instructions.");
-            }
-        }
-
-        var shareSplitTree = ShareSplitNode.CreateShareSplitTree(total!.Value);
-        var x = shareSplitTree.DemandVotes(1,0,2);
-
+        var tickets = shareSplitService.SplitShares(votingInstructions);
 
         applicationLifetime.StopApplication();
 

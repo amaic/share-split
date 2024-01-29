@@ -1,7 +1,4 @@
-using System.Collections.ObjectModel;
-using System.Runtime.ExceptionServices;
-
-namespace ShareSplit;
+namespace ShareSplit.Shared.Model;
 
 public class ShareSplitNode
 {
@@ -86,8 +83,10 @@ public class ShareSplitNode
                     poolB = SplitNodeB;
                 }
 
-                var assignedVotes = poolA.GetVotes(demandedVotes, blockedVotes);
-                assignedVotes ??= poolB.GetVotes(demandedVotes, blockedVotes);
+                ShareSplitNode? assignedVotes = null;
+                if (poolA.Votes >= demandedVotes) assignedVotes = poolA.GetVotes(demandedVotes, blockedVotes);
+                if (assignedVotes == null) assignedVotes = poolB.GetVotes(demandedVotes, blockedVotes);
+                
                 return assignedVotes;
             }
         }
